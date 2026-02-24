@@ -2,7 +2,7 @@
 FROM node:20-alpine AS frontend-builder
 WORKDIR /app/splitter
 COPY splitter/package*.json ./
-RUN npm install
+RUN npm cache clean --force && npm install --legacy-peer-deps
 COPY splitter/ .
 RUN npm run build
 
