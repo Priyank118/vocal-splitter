@@ -1,14 +1,14 @@
 # Build stage for frontend
-FROM node:20-alpine AS frontend-builder
+FROM node:20-slim AS frontend-builder
 WORKDIR /app/splitter
 
 # Copy all frontend files
 COPY splitter/ .
 
-# Clean install dependencies
-RUN npm ci --prefer-offline --no-audit 2>&1 | grep -v "npm WARN" || npm install 2>&1 | tail -10
+# Install dependencies - verbose to see what's happening
+RUN npm install --verbose
 
-# Verify build
+# Build
 RUN npm run build
 
 # Python backend stage
