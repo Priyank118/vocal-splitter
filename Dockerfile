@@ -2,21 +2,14 @@
 FROM node:20-alpine AS frontend-builder
 WORKDIR /app/splitter
 
-# Copy package files
-COPY splitter/package*.json ./
-COPY splitter/.nvmrc ./
+# Copy all frontend files
+COPY splitter/ .
 
-# Clean install with better error handling
-RUN npm ci --prefer-offline --no-audit || npm install --legacy-peer-deps
+# Clean install dependencies
+RUN npm ci --prefer-offline --no-audit 2>&1 | grep -v "npm WARN" || npm install 2>&1 | tail -10
 
-# Copy source code
-COPY splitter/src ./src
-COPY splitter/index.html ./
-COPY splitter/vite.config.js ./
-COPY splitter/eslint.config.js ./
-
-# Build frontend
-RUN npm run build && ls -la dist/
+# Verify build
+RUN npm run build
 
 # Python backend stage
 FROM python:3.11-slim
