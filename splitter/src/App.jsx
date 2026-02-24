@@ -25,11 +25,19 @@ export default function App() {
     // Stores the download URLs received from the backend
     const [downloadUrls, setDownloadUrls] = useState({ vocalsUrl: '', musicUrl: '' });
     
-    // Backend server URL - Auto-detect for production/development
-    const API_URL = import.meta.env.VITE_API_URL || (() => {
-        const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-        return isDevelopment ? 'http://localhost:5000' : window.location.origin;
-    })();
+    // Backend server URL - Determined at runtime to avoid window access during build
+    const getApiUrl = () => {
+        if (import.meta.env.VITE_API_URL) {
+            return import.meta.env.VITE_API_URL;
+        }
+        if (typeof window !== 'undefined') {
+            const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            return isDevelopment ? 'http://localhost:5000' : window.location.origin;
+        }
+        return 'http://localhost:5000';
+    };
+    
+    const API_URL = useMemo(() => getApiUrl(), []);
 
     // --- Event Handlers ---
 
