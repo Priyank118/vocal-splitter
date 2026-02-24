@@ -1,0 +1,15 @@
+version: '3.9'
+
+services:
+  vocal-splitter:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - FLASK_ENV=production
+      - FLASK_DEBUG=0
+    volumes:
+      - ./uploads:/app/uploads
+      - ./output:/app/output
+      - ./spleeter_models:/app/spleeter_models
+    restart: unless-stopped
